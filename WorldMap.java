@@ -81,14 +81,55 @@ public class WorldMap {
 
     /**
      * Triggers the end-of-day refresh event for all factories.
-     * Updates their production grid size based on the player's rank, then spawns new candy.
      */
     public void triggerRefresh(int starRank) {
-        int newGridSize = Math.min(10, 6 + starRank); // 0-star=6, 1-star=7, 2-star=8, 3-star=9, 4-star=10
+        int newGridSize = Math.min(10, 6 + starRank);
         for (Factory f : factories) {
             f.updateGridSize(newGridSize);
             f.refreshGrid();
         }
+    }
+    
+    /**
+     * Prints a visual text grid representation of the map based on current rank boundaries.
+     */
+    public void printMap(Player player) {
+        int minBound = getMinBound(player.getStarRank());
+        int maxBound = getMaxBound(player.getStarRank());
+        
+        System.out.println("\n=== WORLD MAP ===");
+        
+        // Print column numbers header
+        System.out.print("   ");
+        for (int c = minBound; c <= maxBound; c++) {
+            System.out.printf("%2d ", c);
+        }
+        System.out.println();
+        
+        // Print row numbers and grid cells
+        for (int r = minBound; r <= maxBound; r++) {
+            System.out.printf("%2d ", r); // Row coordinate label
+            
+            for (int c = minBound; c <= maxBound; c++) {
+                if (r == player.getRow() && c == player.getCol()) {
+                    System.out.print("[P]"); // Player icon
+                } else if (r == 7 && c == 7) {
+                    System.out.print("[H]"); // Home icon
+                } else {
+                    Factory f = getFactoryAt(r, c);
+                    House h = getHouseAt(r, c);
+                    if (f != null) {
+                        System.out.print("[F]"); // Factory icon
+                    } else if (h != null) {
+                        System.out.print("[" + h.getHouseID() + "]"); // House character ID (e.g. [A], [B])
+                    } else {
+                        System.out.print(" . "); // Empty tile
+                    }
+                }
+            }
+            System.out.println();
+        }
+        System.out.println("=================\n");
     }
 
     /**
