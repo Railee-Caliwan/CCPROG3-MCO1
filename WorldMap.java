@@ -51,7 +51,8 @@ public class WorldMap {
     }
 
     public int getGridSize() { return gridSize; }
-
+    public List<Factory> getFactories() { return factories; }
+    public List<House> getHouses() { return houses; }
     
 
     public void initializeData() {
