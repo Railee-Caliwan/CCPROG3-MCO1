@@ -1,45 +1,101 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents the player's inventory containing slots for candies.
+ */
 public class Inventory {
-    private int maxCapacity;
     private List<Candy> slots;
+    private int maxCapacity;
 
+    /**
+     * Constructs an Inventory with a default capacity of 20 slots.
+     */
     public Inventory() {
-        this.maxCapacity = 20; // Default capacity at 0-star[cite: 2]
         this.slots = new ArrayList<>();
+        this.maxCapacity = 20;
     }
 
-    public boolean addCandy(Candy candy) {
-        if (!isFull()) {
-            slots.add(candy);
-            return true;
-        }
-        return false;
+    public List<Candy> getSlots() {
+        return slots;
     }
 
-    public void discardCandies(List<Integer> indicesToDiscard) {
-        // Sort in descending order to prevent index shifting issues during removal
-        indicesToDiscard.sort(Collections.reverseOrder());
-        for (int index : indicesToDiscard) {
-            if (index >= 0 && index < slots.size()) {
-                slots.remove(index);
-            }
-        }
+    public int getMaxCapacity() {
+        return maxCapacity;
+    }
+
+    public void setMaxCapacity(int maxCapacity) {
+        this.maxCapacity = maxCapacity;
     }
 
     public boolean isFull() {
         return slots.size() >= maxCapacity;
     }
 
-    public void updateCapacity(int starRank) {
-        // Scales from 20 to 100 based on star rank[cite: 2]
-        this.maxCapacity = 20 + (starRank * 20); 
+    /**
+     * Adds a candy to inventory if space is available.
+     * @param candy The candy to add.
+     * @return true if added, false if inventory is full.
+     */
+    public boolean addCandy(Candy candy) {
+        if (isFull()) {
+            return false;
+        }
+        slots.add(candy);
+        return true;
     }
 
-    public List<Candy> getSlots() {
-        return slots;
+    /**
+     * Discards candies at the specified zero-based slot indices.
+     * @param indices List of slot indices to remove.
+     */
+    public void discardCandies(List<Integer> indices) {
+        // Sort in descending order to avoid array index shifting during removal
+        indices.sort((a, b) -> b.compareTo(a));
+        for (int idx : indices) {
+            if (idx >= 0 && idx < slots.size()) {
+                slots.remove(idx);
+            }
+        }
     }
-    public int getMaxCapacity() { return maxCapacity; }
+
+    /**
+     * Counts how many candies match a target candy type and flavor.
+     * If target flavor is "Any", matches any candy of that type.
+     * @param target The target candy criteria.
+     * @return The count of matching candies.
+     */
+    public int countMatching(Candy target) {
+        int count = 0;
+        for (Candy c : slots) {
+            if (c.getType().equalsIgnoreCase(target.getType())) {
+                if ("Any".equalsIgnoreCase(target.getFlavor()) || 
+                   (target.getFlavor() == null && c.getFlavor() == null) ||
+                   (target.getFlavor() != null && target.getFlavor().equalsIgnoreCase(c.getFlavor()))) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Removes up to quantity matching candies for order fulfillment.
+     * @param target Target candy type and flavor to remove.
+     * @param quantity Amount to remove.
+     */
+    public void removeMatching(Candy target, int quantity) {
+        int removed = 0;
+        for (int i = slots.size() - 1; i >= 0 && removed < quantity; i--) {
+            Candy c = slots.get(i);
+            if (c.getType().equalsIgnoreCase(target.getType())) {
+                if ("Any".equalsIgnoreCase(target.getFlavor()) || 
+                   (target.getFlavor() == null && c.getFlavor() == null) ||
+                   (target.getFlavor() != null && target.getFlavor().equalsIgnoreCase(c.getFlavor()))) {
+                    slots.remove(i);
+                    removed++;
+                }
+            }
+        }
+    }
 }
