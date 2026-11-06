@@ -16,7 +16,7 @@ public class Factory {
         this.col = col;
         this.candyPool = candyPool;
         this.productionGridSize = 6; // Default 6x6 at 0-star[cite: 2]
-        this.availableCandies = new Candy[10][10]; // Max size is 10x10[cite: 2]
+        this.availableCandies = new Candy[11][11]; // Max size is 11x11 at 5-stars
         this.random = new Random();
         generateCandies();
     }
