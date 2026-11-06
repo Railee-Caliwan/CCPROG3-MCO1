@@ -253,5 +253,26 @@ public class WorldMap {
     reqM.put(new Candy("Polvoron", "Pandan"), 10);
     this.houses.add(new House('M', 13, 13, reqM, 300));
 
-    // House N (Final Coords: 3, 1
+    // House N (Final Coords: 3, 14, XP: 250)
+    Map<Candy, Integer> reqN = new HashMap<>();
+    reqN.put(new Candy("Candy Cane", null), 16);
+    reqN.put(new Candy("Polvoron", "Jackfruit"), 3);
+    reqN.put(new Candy("Polvoron", "Durian"), 3);
+    reqN.put(new Candy("Lollipop", "Tablea"), 3);
+    this.houses.add(new House('N', 3, 14, reqN, 250));
+
+    // House O (Final Coords: 14, 0, XP: 1000)
+    Map<Candy, Integer> reqO = new HashMap<>();
+    reqO.put(new Candy("Candy Cane", null), 100);
+    this.houses.add(new House('O', 14, 0, reqO, 1000));
+
+    // House P (Final Coords: 14, 10, XP: 250)
+    Map<Candy, Integer> reqP = new HashMap<>();
+    reqP.put(new Candy("Candy Corn", null), 5);
+    reqP.put(new Candy("Candy Cane", null), 5);
+    reqP.put(new Candy("Pastillas", "Macapuno"), 5);
+    reqP.put(new Candy("Yema", "Macapuno"), 5);
+    reqP.put(new Candy("Polvoron", "Macapuno"), 5);
+    this.houses.add(new House('P', 14, 10, reqP, 250));
+}
 }
