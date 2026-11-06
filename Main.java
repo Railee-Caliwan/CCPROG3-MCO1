@@ -76,6 +76,9 @@ public class Main {
         boolean traveling = true;
         while (traveling) {
             System.out.println("\n--- TRAVEL MODE ---");
+            // Prints the text grid to console
+            worldMap.printMap(player); 
+            
             System.out.println("Current Location: Row " + player.getRow() + ", Col " + player.getCol());
             System.out.println("Available Moves: [W] Up, [S] Down, [A] Left, [D] Right");
             if (player.canMoveDiagonally()) {
@@ -244,7 +247,6 @@ public class Main {
         boolean found = false;
 
         for (Factory f : worldMap.getFactories()) {
-            // Only check factories within current bounds
             if (worldMap.isValidLocation(f.getRow(), f.getCol(), player.getStarRank())) {
                 for (Candy c : f.getCandyPool()) {
                     if (c.getType().equalsIgnoreCase(targetType)) {
