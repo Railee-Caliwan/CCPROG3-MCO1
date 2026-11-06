@@ -92,4 +92,6 @@ public class House {
     public int getRow() { return row; }
     public int getCol() { return col; }
     public char getHouseID() { return houseID; }
+    public int getXpReward() { return xpReward; }
+    public Map<Candy, Integer> getRequiredOrder() { return requiredOrder; }
 }
