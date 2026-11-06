@@ -56,5 +56,7 @@ public class Factory {
     // Getters for location mapping
     public int getRow() { return row; }
     public int getCol() { return col; }
+    public int getFactoryID() { return factoryID; }
     public List<Candy> getCandyPool() { return candyPool; }
+    
 }
