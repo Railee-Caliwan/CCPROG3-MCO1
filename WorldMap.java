@@ -51,4 +51,48 @@ public class WorldMap {
     }
 
     public int getGridSize() { return gridSize; }
+
+    public void initializeData() {
+        // --- FACTORY INITIALIZATION (Appendix C) ---
+        // Factory 1: Introduced at 0-star. 7x7 Intro Coords: Row 0, Col 6[cite: 16]
+        List<Candy> poolF1 = new ArrayList<>();
+        poolF1.add(new Candy("Candy Corn", null));
+        poolF1.add(new Candy("Lollipop", "Ube"));
+        poolF1.add(new Candy("Lollipop", "Mango"));
+        poolF1.add(new Candy("Lollipop", "Macapuno"));
+        poolF1.add(new Candy("Lollipop", "Pandan"));
+        this.factories.add(new Factory(1, 0, 6, poolF1)); // Use 7x7 intro coordinates
+
+        // Factory 2: Introduced at 0-star. 7x7 Intro Coords: Row 6, Col 0[cite: 16]
+        List<Candy> poolF2 = new ArrayList<>();
+        poolF2.add(new Candy("Gummy", "Ube"));
+        poolF2.add(new Candy("Gummy", "Mango"));
+        poolF2.add(new Candy("Gummy", "Macapuno"));
+        poolF2.add(new Candy("Gummy", "Pandan"));
+        poolF2.add(new Candy("Marshmallow", "Ube"));
+        poolF2.add(new Candy("Marshmallow", "Mango"));
+        poolF2.add(new Candy("Marshmallow", "Macapuno"));
+        poolF2.add(new Candy("Marshmallow", "Pandan"));
+        this.factories.add(new Factory(2, 6, 0, poolF2));
+
+        // TODO: Add Factories 3 through 10 here following the Appendix C specs...
+
+        // --- HOUSE INITIALIZATION (Appendix D) ---
+        // House A: 7x7 Intro Coords: Row 1, Col 1. XP: 100[cite: 21]
+        Map<Candy, Integer> reqA = new HashMap<>();
+        reqA.put(new Candy("Candy Corn", null), 4);
+        // Note: For "any flavor", you will need to adjust your House canFulfill logic 
+        // to accept a base type, or explicitly list all accepted flavors here.
+        reqA.put(new Candy("Gummy", "Any"), 2); 
+        reqA.put(new Candy("Lollipop", "Any"), 2);
+        reqA.put(new Candy("Marshmallow", "Any"), 2);
+        this.houses.add(new House('A', 1, 1, reqA, 100));
+
+        // House B: 7x7 Intro Coords: Row 5, Col 2. XP: 150[cite: 21]
+        Map<Candy, Integer> reqB = new HashMap<>();
+        reqB.put(new Candy("Candy Corn", null), 15);
+        this.houses.add(new House('B', 5, 2, reqB, 150));
+
+        // TODO: Add Houses C through P here following the Appendix D specs...
+    }
 }
