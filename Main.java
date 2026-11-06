@@ -11,6 +11,7 @@ public class Main {
         
         // Initialize the world map and player (starting at center of the 7x7 grid)[cite: 2, 3]
         WorldMap world = new WorldMap();
+        world.initializeData();
         Player player = new Player(playerName, 3, 3);
         
         // TODO: Initialize Factories and Houses here (or inside WorldMap constructor)
