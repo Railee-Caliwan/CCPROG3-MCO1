@@ -33,13 +33,13 @@ public class Factory {
     }
 
     public Candy pickUp(int gridRow, int gridCol) {
-        if (gridRow < productionGridSize && gridCol < productionGridSize) {
+        if (gridRow >= 0 && gridRow < productionGridSize && gridCol >= 0 && gridCol < productionGridSize) {
             Candy picked = availableCandies[gridRow][gridCol];
-            availableCandies[gridRow][gridCol] = null; // Leave slot vacant[cite: 4]
+            availableCandies[gridRow][gridCol] = null; 
             return picked;
         }
         return null;
-    }
+}
 
     public void refreshEvent(int currentStarRank) {
         // Expand grid if rank increased (6x6 up to 10x10)[cite: 2]
