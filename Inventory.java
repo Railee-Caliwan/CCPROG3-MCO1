@@ -41,4 +41,5 @@ public class Inventory {
     public List<Candy> getSlots() {
         return slots;
     }
+    public int getMaxCapacity() { return maxCapacity; }
 }
