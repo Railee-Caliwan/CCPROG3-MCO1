@@ -77,4 +77,8 @@ public class Player {
     public int getCol() { return currentCol; }
     public Inventory getInventory() { return inventory; }
     public int getStarRank() { return starRank; }
+    public String getName() { return name; }
+    public int getTotalXP() { return totalXP; }
+    public int getTotalSteps() { return totalSteps; }
+    public int getDayNumber() { return dayNumber; }
 }
