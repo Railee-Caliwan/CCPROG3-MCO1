@@ -70,7 +70,6 @@ public class WorldMap {
 
         // Factory 2 (Intro: 7x7, Coords: 6, 0)
         List<Candy> poolF2 = new ArrayList<>();
-        poolF2.add(new Candy("Candy Corn", null));
         for (String f : new String[]{"Ube", "Mango", "Macapuno", "Pandan"}) {
             poolF2.add(new Candy("Gummy", f));
             poolF2.add(new Candy("Marshmallow", f));
@@ -79,7 +78,6 @@ public class WorldMap {
 
         // Factory 3 (Intro: 9x9, Coords: 0, 0)
         List<Candy> poolF3 = new ArrayList<>();
-        poolF3.add(new Candy("Candy Corn", null));
         for (String f : new String[]{"Ube", "Mango", "Macapuno", "Pandan"}) {
             poolF3.add(new Candy("Pastillas", f));
             poolF3.add(new Candy("Yema", f));
@@ -266,7 +264,6 @@ public class WorldMap {
         // House O (Intro: 15x15, Coords: 14, 0, XP: 1000)
         Map<Candy, Integer> reqO = new HashMap<>();
         reqO.put(new Candy("Candy Cane", null), 100);
-        reqO.put(new Candy("Candy Corn", null), 10);
         this.houses.add(new House('O', 14, 0, reqO, 1000));
 
         // House P (Intro: 15x15, Coords: 14, 10, XP: 250)
