@@ -72,7 +72,55 @@ public class Main {
     
     // Stub methods to be implemented in the next steps
     private static void handleTravel(Scanner scanner, Player player, WorldMap world) {
-        System.out.println("Travel menu coming soon...");
+        boolean traveling = true;
+        
+        while (traveling) {
+            System.out.println("\n--- Travel Mode ---");
+            System.out.println("Current Coordinates: Row " + player.getRow() + ", Col " + player.getCol());
+            
+            // Trigger events if standing on a building tile[cite: 3]
+            checkLocationEvents(scanner, player, world);
+
+            System.out.println("\nWhere would you like to move?");
+            System.out.print("Options: W (Up), S (Down), A (Left), D (Right)");
+            if (player.getStarRank() >= 3) {
+                System.out.print(", Q (UpLeft), E (UpRight), Z (DownLeft), C (DownRight)"); // Diagonals[cite: 2]
+            }
+            System.out.println(", X (Exit Travel Mode)");
+            System.out.print("Enter choice: ");
+            
+            String moveInput = scanner.nextLine().toUpperCase();
+            
+            if (moveInput.equals("X")) {
+                traveling = false; // Player must exit travel mode to view other menus[cite: 5]
+                System.out.println("Exiting Travel Mode...");
+                continue;
+            }
+
+            // Map input to the string directions in Player.java
+            String direction = "";
+            switch (moveInput) {
+                case "W": direction = "up"; break;
+                case "S": direction = "down"; break;
+                case "A": direction = "left"; break;
+                case "D": direction = "right"; break;
+                case "Q": direction = "upleft"; break;
+                case "E": direction = "upright"; break;
+                case "Z": direction = "downleft"; break;
+                case "C": direction = "downright"; break;
+                default: 
+                    System.out.println("Invalid input."); 
+                    continue;
+            }
+
+            // Attempt movement and provide text-based feedback[cite: 3, 8]
+            boolean success = player.move(direction, world.getGridSize());
+            if (success) {
+                System.out.println("Moved " + direction + " successfully! New coordinates: Row " + player.getRow() + ", Col " + player.getCol());
+            } else {
+                System.out.println("Move failed. You cannot travel beyond the world border or use locked moves.");
+            }
+        }
     }
 
     private static void handleSearchCandies(Scanner scanner, WorldMap world) {
