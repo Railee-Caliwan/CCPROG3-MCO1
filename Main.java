@@ -124,18 +124,192 @@ public class Main {
     }
 
     private static void handleSearchCandies(Scanner scanner, WorldMap world) {
-        System.out.println("Search Candies menu coming soon...");
+        System.out.println("\n--- Search Candies ---");
+        System.out.print("Enter candy type (e.g., Gummy, Lollipop, Candy Corn): ");
+        String searchType = scanner.nextLine().trim();
+        
+        System.out.println("Factories producing " + searchType + ":");
+        boolean found = false;
+        
+        for (Factory f : world.getFactories()) {
+            for (Candy c : f.getCandyPool()) {
+                if (c.getType().equalsIgnoreCase(searchType)) {
+                    System.out.println("- Factory " + f.getFactoryID() + " (Row " + f.getRow() + ", Col " + f.getCol() + ")");
+                    found = true;
+                    break; // Move to next factory once a match is found
+                }
+            }
+        }
+        if (!found) System.out.println("No factories produce this candy.");
     }
 
     private static void handleViewOrders(WorldMap world) {
-        System.out.println("View Orders menu coming soon...");
+        System.out.println("\n--- Active Orders ---");
+        for (House h : world.getHouses()) {
+            if (!h.isDelivered()) {
+                System.out.println("House " + h.getHouseID() + " (Row " + h.getRow() + ", Col " + h.getCol() + "):");
+                System.out.println("  XP Reward: " + h.getXpReward());
+                System.out.println("  Requirements:");
+                for (Map.Entry<Candy, Integer> entry : h.getRequiredOrder().entrySet()) {
+                    String flavor = entry.getKey().getFlavor() == null ? "" : " (" + entry.getKey().getFlavor() + ")";
+                    System.out.println("    - " + entry.getValue() + "x " + entry.getKey().getType() + flavor);
+                }
+            }
+        }
     }
 
     private static void handleViewInventory(Scanner scanner, Player player) {
-        System.out.println("View Inventory menu coming soon...");
+        System.out.println("\n--- Inventory ---");
+        List<Candy> slots = player.getInventory().getSlots();
+        System.out.println("Capacity: " + slots.size() + " / " + player.getInventory().getMaxCapacity());
+        
+        if (slots.isEmpty()) {
+            System.out.println("Your inventory is empty.");
+            return;
+        }
+
+        for (int i = 0; i < slots.size(); i++) {
+            Candy c = slots.get(i);
+            String flavor = c.getFlavor() == null ? "" : " (" + c.getFlavor() + ")";
+            System.out.println(i + ": " + c.getType() + flavor);
+        }
+
+        System.out.print("\nDo you want to discard any candies? (Y/N): ");
+        if (scanner.nextLine().equalsIgnoreCase("Y")) {
+            System.out.print("Enter the numbers of the candies to discard, separated by commas (e.g., 0, 3, 4): ");
+            String[] inputs = scanner.nextLine().split(",");
+            List<Integer> toDiscard = new ArrayList<>();
+            for (String s : inputs) {
+                try {
+                    toDiscard.add(Integer.parseInt(s.trim()));
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid number: " + s);
+                }
+            }
+            player.getInventory().discardCandies(toDiscard);
+            System.out.println("Candies discarded successfully.");
+        }
     }
 
     private static void handleViewPlayerInfo(Player player) {
-        System.out.println("View Player Info coming soon...");
+        System.out.println("\n--- Player Info ---");
+        System.out.println("Player Name: " + player.getName());
+        System.out.println("Star Rank: " + player.getStarRank() + "-star");
+        System.out.println("Total XP: " + player.getTotalXP());
+        
+        // Calculate XP to next rank[cite: 6]
+        int xpNeeded = 0;
+        int currentXP = player.getTotalXP();
+        if (currentXP < 100) xpNeeded = 100 - currentXP;
+        else if (currentXP < 500) xpNeeded = 500 - currentXP;
+        else if (currentXP < 1400) xpNeeded = 1400 - currentXP;
+        else if (currentXP < 3000) xpNeeded = 3000 - currentXP;
+        else if (currentXP < 5500) xpNeeded = 5500 - currentXP;
+        
+        if (player.getStarRank() == 5) {
+            System.out.println("XP to next rank: MAX RANK REACHED");
+        } else {
+            System.out.println("XP to next rank: " + xpNeeded);
+        }
+        
+        System.out.println("Total steps traveled: " + player.getTotalSteps());
+        System.out.println("Day number: " + player.getDayNumber());
+    }
+
+
+    private static void checkLocationEvents(Scanner scanner, Player player, WorldMap world) {
+        // 1. Check Player's Home[cite: 5]
+        if (world.isPlayerAtHome(player)) {
+            System.out.println("You are at the Player's Home.");
+            System.out.print("Are you ready to call it a day? (Y/N): ");
+            if (scanner.nextLine().equalsIgnoreCase("Y")) {
+                player.endDay();
+                // world.refreshAllFactories(player.getStarRank()); // Make sure to add this helper to WorldMap
+                System.out.println("Day ended. All factory candies have been refreshed. Good morning!");
+            }
+            return; 
+        }
+
+        // 2. Check Houses[cite: 4]
+        House house = world.getHouseAt(player.getRow(), player.getCol());
+        if (house != null) {
+            System.out.println("You arrived at House " + house.getHouseID() + ".");
+            if (house.canFulfill(player.getInventory())) {
+                System.out.print("You have enough candy! Do you want to deliver it? (Y/N): ");
+                if (scanner.nextLine().equalsIgnoreCase("Y")) {
+                    int xpGained = house.processDelivery(player.getInventory());
+                    player.addXP(xpGained);
+                    System.out.println("Successfully delivered order to House " + house.getHouseID() + "!"); // Required explicit feedback[cite: 8]
+                    System.out.println("You gained " + xpGained + " XP.");
+                }
+            } else {
+                System.out.println("You do not have enough candy to make this delivery."); // Required explicit error message[cite: 8]
+            }
+            return;
+        }
+
+        // 3. Check Factories[cite: 3]
+        Factory factory = world.getFactoryAt(player.getRow(), player.getCol());
+        if (factory != null) {
+            System.out.println("You arrived at Factory " + factory.getFactoryID() + ".");
+            System.out.print("Do you want to enter the factory? (Y/N): ");
+            if (scanner.nextLine().equalsIgnoreCase("Y")) {
+                handleFactoryVisit(scanner, player, factory);
+            }
+        }
+    }
+
+    private static void handleFactoryVisit(Scanner scanner, Player player, Factory factory) {
+        boolean inFactory = true;
+        
+        while (inFactory) {
+            System.out.println("\n--- Inside Factory " + factory.getFactoryID() + " ---");
+            System.out.println("1. Pick up candy");
+            System.out.println("2. Exit factory");
+            System.out.print("Select an option: ");
+            String choice = scanner.nextLine();
+            
+            if (choice.equals("1")) {
+                if (player.getInventory().isFull()) {
+                    System.out.println("You don't have enough space in your inventory."); // Required explicit error message[cite: 6, 8]
+                    continue;
+                }
+                
+                // Allow picking up multiple candies at a time[cite: 4]
+                System.out.println("Enter row and column of candies to pick up, separated by commas (e.g., '0 2, 1 3'): ");
+                String input = scanner.nextLine();
+                String[] coordinatePairs = input.split(",");
+                
+                for (String pair : coordinatePairs) {
+                    if (player.getInventory().isFull()) {
+                        System.out.println("Inventory reached max capacity during pickup!");
+                        break;
+                    }
+                    
+                    String[] coords = pair.trim().split(" ");
+                    if (coords.length == 2) {
+                        try {
+                            int r = Integer.parseInt(coords[0]);
+                            int c = Integer.parseInt(coords[1]);
+                            Candy picked = factory.pickUp(r, c);
+                            
+                            if (picked != null) {
+                                player.getInventory().addCandy(picked);
+                                System.out.println("You picked up: " + picked.getType() + " (" + picked.getFlavor() + ")"); // Required explicit feedback[cite: 8]
+                            } else {
+                                System.out.println("Slot [" + r + " " + c + "] is vacant or invalid.");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid format for pair: " + pair);
+                        }
+                    }
+                }
+            } else if (choice.equals("2")) {
+                inFactory = false;
+                System.out.println("Exiting factory. You are back outside.");
+            } else {
+                System.out.println("Invalid option.");
+            }
+        }
     }
 }
